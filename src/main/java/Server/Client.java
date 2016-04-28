@@ -56,7 +56,7 @@ public class Client implements IJobDoneCallback<Integer> {
             try{
                 System.out.printf("",pendingJob.getResult());
             }
-            catch (InvalidStateException e){
+            catch (IllegalStateException e){
                 System.err.println("Invalid read: Value not ready");
             }
 

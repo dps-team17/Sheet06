@@ -1,8 +1,6 @@
 package team17.sheet06.common;
 
 
-import sun.plugin.dom.exception.InvalidStateException;
-
 import java.io.Serializable;
 
 public class Job<T> implements IJob<T>, Serializable{
@@ -15,9 +13,9 @@ public class Job<T> implements IJob<T>, Serializable{
     }
 
     @Override
-    public synchronized T getResult() throws InvalidStateException {
+    public synchronized T getResult() throws IllegalStateException {
 
-        if(result == null) throw new InvalidStateException("Result not ready");
+        if(result == null) throw new IllegalStateException("Result not ready");
         return result;
     }
 
