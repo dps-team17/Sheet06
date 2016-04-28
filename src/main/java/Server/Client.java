@@ -16,7 +16,6 @@ public class Client implements IJobDoneCallback<Integer> {
 
     private static int CLIENTS_CREATED = 0;
 
-    private Registry registry;
     private IComputationService computationService;
     private IJobDoneCallback<Integer> callback;
     private IJob<Integer> pendingJob;
@@ -29,10 +28,10 @@ public class Client implements IJobDoneCallback<Integer> {
     private void init() {
 
         try {
-            registry = LocateRegistry.getRegistry();
+            Registry registry = LocateRegistry.getRegistry();
             computationService = (IComputationService) registry.lookup(IComputationService.SERVICE_NAME);
 
-            callback = (IJobDoneCallback) UnicastRemoteObject.exportObject(this, 0);
+            callback = (IJobDoneCallback<Integer>) UnicastRemoteObject.exportObject(this, 0);
 
         } catch (RemoteException | NotBoundException e) {
             e.printStackTrace();
@@ -44,7 +43,6 @@ public class Client implements IJobDoneCallback<Integer> {
         init();
 
         try {
-
             int n = 46;
             CalculateFibonacciTask fibonacciTask = new CalculateFibonacciTask(n);
             pendingJob = computationService.submit(fibonacciTask, callback);
@@ -56,15 +54,8 @@ public class Client implements IJobDoneCallback<Integer> {
                 return;
             }
 
-            try {
-                System.out.printf("", pendingJob.getResult());
-            } catch (IllegalStateException e) {
-                log("Invalid read: Value not ready");
-            }
-
             log("Waiting for love....");
 
-            int x = 1;
             while (!pendingJob.isDone()) {
                 Thread.sleep(1000);
                 //System.out.printf("Waiting since %d seconds\n", x++);
