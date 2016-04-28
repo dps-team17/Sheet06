@@ -1,7 +1,9 @@
 
 package Server;
 
+import com.sun.xml.internal.bind.v2.model.core.ID;
 import team17.sheet06.common.IComputationService;
+import team17.sheet06.common.IDispatcherService;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -21,10 +23,10 @@ class Server {
             IComputationService computationService = new ComputationService();
             IComputationService computationServiceStub = (IComputationService) UnicastRemoteObject.exportObject(computationService,0);
 
-            // Bind stubs in the registry
-            Registry registry = LocateRegistry.createRegistry(1099);
-            registry.rebind(IComputationService.SERVICE_NAME, computationServiceStub);
+            Registry registry = LocateRegistry.getRegistry();
+            IDispatcherService dispatcher = (IDispatcherService) registry.lookup(IDispatcherService.SERVICE_NAME);
 
+            dispatcher.Register(computationServiceStub);
             System.out.println("Server ready");
 
         } catch (Exception e) {

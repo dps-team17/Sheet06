@@ -14,13 +14,16 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class Client implements IJobDoneCallback<Integer> {
 
+    private static int CLIENTS_CREATED = 0;
+
     private Registry registry;
     private IComputationService computationService;
     private IJobDoneCallback<Integer> callback;
     private IJob<Integer> pendingJob;
+    private int id;
 
     public Client() {
-
+        this.id = CLIENTS_CREATED++;
     }
 
     private void init() {
@@ -36,7 +39,6 @@ public class Client implements IJobDoneCallback<Integer> {
         }
     }
 
-
     public void run() {
 
         init();
@@ -47,28 +49,29 @@ public class Client implements IJobDoneCallback<Integer> {
             CalculateFibonacciTask fibonacciTask = new CalculateFibonacciTask(n);
             pendingJob = computationService.submit(fibonacciTask, callback);
 
-            if(pendingJob == null){
-                System.out.println("Ach wie schade...");
+            if (pendingJob == null) {
+                log("Service not available");
+
+                UnicastRemoteObject.unexportObject(this, false);
                 return;
             }
 
-            try{
-                System.out.printf("",pendingJob.getResult());
-            }
-            catch (IllegalStateException e){
-                System.err.println("Invalid read: Value not ready");
+            try {
+                System.out.printf("", pendingJob.getResult());
+            } catch (IllegalStateException e) {
+                log("Invalid read: Value not ready");
             }
 
-            System.out.println("Waiting for love....");
+            log("Waiting for love....");
 
             int x = 1;
             while (!pendingJob.isDone()) {
                 Thread.sleep(1000);
-                System.out.printf("Waiting since %d seconds\n", x++);
+                //System.out.printf("Waiting since %d seconds\n", x++);
             }
 
             UnicastRemoteObject.unexportObject(this, false);
-            System.out.printf("The fibonacci number %d is %d\n", n, pendingJob.getResult());
+            log(String.format("The fibonacci number %d is %d", n, pendingJob.getResult()));
 
         } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());
@@ -76,14 +79,26 @@ public class Client implements IJobDoneCallback<Integer> {
         }
     }
 
-    public static void main(String[] main) {
-
-        Client client = new Client();
-        client.run();
+    private void log(String message) {
+        System.out.printf("%d: %s\n",id, message);
     }
 
     @Override
     public void setResult(Integer result) {
         pendingJob.setResult(result);
+    }
+
+
+    public static void main(String[] main) {
+
+        for(int i = 0; i < 10; i++) {
+
+            new Thread (){
+                public void run(){
+                    Client client = new Client();
+                    client.run();
+                }
+            }.start();
+        }
     }
 }
