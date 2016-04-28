@@ -16,7 +16,7 @@ public class Client implements IJobDoneCallback<Integer> {
 
     private Registry registry;
     private IComputationService computationService;
-    private IJobDoneCallback callback;
+    private IJobDoneCallback<Integer> callback;
     private IJob<Integer> pendingJob;
 
     public Client() {
