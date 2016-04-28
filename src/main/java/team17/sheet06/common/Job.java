@@ -1,9 +1,28 @@
 package team17.sheet06.common;
 
 
-public interface Job<T> {
+import sun.plugin.dom.exception.InvalidStateException;
 
-    public boolean isDone();
+import java.io.Serializable;
 
-    public T getResult();
+public class Job<T> implements IJob<T>, Serializable{
+
+    private T result = null;
+
+    @Override
+    public synchronized boolean isDone() {
+        return result != null;
+    }
+
+    @Override
+    public synchronized T getResult() throws InvalidStateException {
+
+        if(result == null) throw new InvalidStateException("Result not ready");
+        return result;
+    }
+
+    @Override
+    public synchronized void setResult(T x) {
+        result = x;
+    }
 }
