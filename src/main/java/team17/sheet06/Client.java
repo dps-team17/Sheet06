@@ -1,4 +1,4 @@
-package Server;
+package team17.sheet06;
 
 import team17.sheet06.common.CalculateFibonacciTask;
 import team17.sheet06.common.IComputationService;

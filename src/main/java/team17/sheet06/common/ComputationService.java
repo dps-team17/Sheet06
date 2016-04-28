@@ -1,4 +1,4 @@
-package Server;
+package team17.sheet06.common;
 
 import team17.sheet06.common.IComputationService;
 import team17.sheet06.common.IJob;

@@ -1,6 +1,7 @@
 
-package Server;
+package team17.sheet06;
 
+import team17.sheet06.common.ComputationService;
 import team17.sheet06.common.IComputationService;
 
 import java.rmi.registry.LocateRegistry;
