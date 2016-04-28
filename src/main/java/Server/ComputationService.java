@@ -13,7 +13,7 @@ public class ComputationService implements IComputationService {
 
     private ExecutorService executor;
     private volatile int currentJobs;
-    private final int MAX_JOBS = 3;
+    private final int MAX_JOBS = 1;
 
     public ComputationService(){
         executor = Executors.newCachedThreadPool();
